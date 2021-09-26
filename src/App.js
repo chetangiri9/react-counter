@@ -1,23 +1,80 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./App.css";
 
 function App() {
+  const [counterValue, setCounterValue] = useState(null);
+  const [inputValue, setInputValue] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const updateCounterValue = (value) => {
+    if (value > 0 || value <= 1000) {
+      setLoading(true);
+      axios
+        .put(
+          `https://interview-8e4c5-default-rtdb.firebaseio.com/front-end.json`,
+          {
+            chetan: value,
+          }
+        )
+        .then((res) => {
+          setInputValue(value);
+          setLoading(false);
+        });
+    }
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(
+        `https://interview-8e4c5-default-rtdb.firebaseio.com/front-end/chetan.json`
+      )
+      .then((res) => {
+        setCounterValue(res.data);
+        setLoading(false);
+      });
+  }, [inputValue, counterValue]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="Counter-container">
+        {loading && (
+          <div className="loader-container">
+            <div className="loader" />
+            <p>Saving counter value</p>
+          </div>
+        )}
+        <div className="Counter-inner-container">
+          <button
+            className="decrement"
+            onClick={() => updateCounterValue(inputValue - 1)}
+            disabled={inputValue <= 0}
+          >
+            -
+          </button>
+          <input
+            className="counter-input"
+            value={inputValue}
+            onChange={(e) => {
+              if (!isNaN(parseInt(e.target.value))) {
+                updateCounterValue(parseInt(e.target.value));
+              }
+            }}
+          />
+          <button
+            className="increment"
+            onClick={() => updateCounterValue(inputValue + 1)}
+            disabled={inputValue >= 1000}
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <div className="Counter-value-container">
+        <p>Counter value</p>
+        <p>{counterValue}</p>
+      </div>
     </div>
   );
 }
