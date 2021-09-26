@@ -58,7 +58,10 @@ function App() {
             className="counter-input"
             value={inputValue}
             onChange={(e) => {
-              if (!isNaN(parseInt(e.target.value))) {
+              if (
+                !isNaN(parseInt(e.target.value)) &&
+                parseInt(e.target.value) <= 1000
+              ) {
                 updateCounterValue(parseInt(e.target.value));
               }
             }}
