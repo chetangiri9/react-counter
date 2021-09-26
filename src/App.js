@@ -32,6 +32,7 @@ function App() {
       )
       .then((res) => {
         setCounterValue(res.data);
+        setInputValue(res.data);
         setLoading(false);
       });
   }, [inputValue, counterValue]);
